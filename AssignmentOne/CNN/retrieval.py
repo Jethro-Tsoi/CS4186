@@ -11,6 +11,7 @@ base_path = '/Users/jethrotsoi/git/CS4186/AssignmentOne'
 query_path = './CS4186_dataset/query_img_4186'
 feat_savedir = './CNN/data/gallery_feature'
 gallery_dir = './CS4186_dataset/gallery_4186'
+query_feat_file_path = os.path.join(base_path, './CNN/data/query_feat')
 query_path = os.path.join(base_path, query_path)
 feat_savedir = os.path.join(base_path, feat_savedir)
 gallery_dir = os.path.join(base_path, gallery_dir)
@@ -22,8 +23,11 @@ def similarity(query_feat, gallery_feat):
     sim = np.squeeze(sim)
     return sim
 
-def retrival_idx(query_path: str):#, gallery_dir):
-    query_feat = np.load(query_path)
+def retrival_idx(query_path: str, query_no: str):#, gallery_dir):
+    query_resnet_feat_path = os.path.join(query_path, 'resnet', query_no + '.npy')
+    query_efficientnet_feat_path = os.path.join(query_path, 'efficientnet', query_no + '.npy')
+    query_resnet_feat = np.load(query_resnet_feat_path)
+    query_efficientnet_feat = np.load(query_efficientnet_feat_path)
     dict = {}
     for gallery_file in os.listdir(gallery_dir):
         # gallery_feat = np.load(os.path.join(gallery_dir, gallery_file))
@@ -33,8 +37,8 @@ def retrival_idx(query_path: str):#, gallery_dir):
         feat_name = gallery_file.split('.')[0] + '.npy'
         resnet_feat = np.load(os.path.join(feat_savedir, 'resnet', feat_name))
         efficientnet_feat = np.load(os.path.join(feat_savedir, 'efficientnet', feat_name))
-        resnet_sim = similarity(query_feat, resnet_feat)
-        efficientnet_sim = similarity(query_feat, efficientnet_feat)
+        resnet_sim = similarity(query_resnet_feat, resnet_feat)
+        efficientnet_sim = similarity(query_efficientnet_feat, efficientnet_feat)
         sim = resnet_sim * efficientnet_sim
         # sim = (resnet_sim + efficientnet_sim) / 2
         dict[gallery_file] = sim
@@ -49,7 +53,7 @@ def visulization(retrived, query):
     img_rgb_rgb = query_img[:,:,::-1]
     plt.imshow(img_rgb_rgb)
     for i in range(top_no_matching_images):
-        img_path = './CS4186_dataset/gallery_4186' + retrived[i][0]
+        img_path = './CS4186_dataset/gallery_4186/' + retrived[i][0]
         img_path = os.path.join(base_path, img_path)
 
         img = cv2.imread(img_path)
@@ -61,8 +65,9 @@ def visulization(retrived, query):
 
 if __name__ == '__main__':
     for query_file in os.listdir(query_path):
+        query_no = query_file.split('.')[0]
         query_file_path = os.path.join(query_path, query_file)
-        best_five = retrival_idx(query_file_path) # retrieve top 5 matching images in the gallery.
+        best_five = retrival_idx(query_feat_file_path, query_no) # retrieve top 5 matching images in the gallery.
         best_five.reverse()
         visulization(best_five, query_file_path) # Visualize the retrieval results
     # best_five = retrival_idx(query_path) # retrieve top 5 matching images in the gallery.
