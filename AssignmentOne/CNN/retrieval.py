@@ -49,7 +49,7 @@ def visulization(retrived, query):
     img_rgb_rgb = query_img[:,:,::-1]
     plt.imshow(img_rgb_rgb)
     for i in range(top_no_matching_images):
-        img_path = './data/gallery/' + retrived[i][0]
+        img_path = './CS4186_dataset/gallery_4186' + retrived[i][0]
         img_path = os.path.join(base_path, img_path)
 
         img = cv2.imread(img_path)
