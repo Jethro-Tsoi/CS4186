@@ -8,9 +8,9 @@ from matplotlib import pyplot as plt
 top_no_matching_images = 5
 # base_path = '/Users/jethrotsoi/git/CS4186/AssignmentOne/AssignmentOne/CV_assignment1_guideline_CNN/assignment1_torch_code'
 base_path = '/Users/jethrotsoi/git/CS4186/AssignmentOne'
-query_path = './data/query_feat/query_feats.npy'
-feat_savedir = './data/gallery_feature/'
-gallery_dir = './data/gallery/'
+query_path = './CS4186_dataset/query_img_4186'
+feat_savedir = './CNN/data/gallery_feature'
+gallery_dir = './CS4186_dataset/gallery_4186'
 query_path = os.path.join(base_path, query_path)
 feat_savedir = os.path.join(base_path, feat_savedir)
 gallery_dir = os.path.join(base_path, gallery_dir)
@@ -60,11 +60,16 @@ def visulization(retrived, query):
     plt.show()
 
 if __name__ == '__main__':
-    best_five = retrival_idx(query_path) # retrieve top 5 matching images in the gallery.
-    best_five.reverse()
-    query_path = './data/query/query.jpg'
-    query_path = os.path.join(base_path, query_path)
-    print(query_path)
+    for query_file in os.listdir(query_path):
+        query_file_path = os.path.join(query_path, query_file)
+        best_five = retrival_idx(query_file_path) # retrieve top 5 matching images in the gallery.
+        best_five.reverse()
+        visulization(best_five, query_file_path) # Visualize the retrieval results
+    # best_five = retrival_idx(query_path) # retrieve top 5 matching images in the gallery.
+    # best_five.reverse()
+    # # query_path = './data/query/query.jpg'
+    # # query_path = os.path.join(base_path, query_path)
+    # # print(query_path)
 
-    visulization(best_five, query_path) # Visualize the retrieval results
+    # visulization(best_five, query_path) # Visualize the retrieval results
 
